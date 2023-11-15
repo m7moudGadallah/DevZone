@@ -52,7 +52,8 @@ There is a simple WireFrame, I sketched to visualize requirements.
 - **Runtime Environment**: Node.js
 - **Framework**: Express.
 - **ORM**: Prisma.
-- **Database**: PostgreSQL.
+- **Database**: PostgreSQL (Hosted on Neon).
+- **Authentication**: JWT (JSON Web Token) for secure user authentication.
 - **Testing:** Jest (Unit, Integration, Functional with superset).
 - **Validation:** Joi for request data validation.
 - **API Documentation:** Postman for development, testing, and documentation.
