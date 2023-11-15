@@ -1,0 +1,60 @@
+Table users {
+  id varchar [pk]
+  username varchar [unique, not null]
+  email varchar [unique]
+  about varchar 
+  password varchar [not null]
+  password_changed_at timestamp(3)
+  created_at timestamp(3) [default: `now()`]
+  udpated_at timestamp(3)
+}
+
+Table posts {
+  id varchar [pk]
+  title varchar [not null]
+  url varchar [unique]
+  text varchar
+  user_id varchar [ref: > users.id]
+  tag_id varchar [ref: > tags.id]
+  created_at timestamp(3) [default: `now()`]
+}
+
+Table comments {
+  id varchar [pk]
+  text varchar [not null]
+  parent_comment_id varchar [ref: > comments.id]
+  user_id varchar [ref: > users.id]
+  post_id varchar [ref: > posts.id]
+  created_at timestamp(3) [default: `now()`]
+}
+
+Table votes {
+  id varchar [pk]
+  user_id varchar [ref: > users.id]
+  post_id varchar [ref: > posts.id]
+  is_upvote boolean
+  created_at timestamp(3) [default: `now()`]
+}
+
+Table questions {
+  id varchar [pk]
+  text varchar [not null]
+  user_id varchar [ref: > users.id]
+  tag_id varchar [ref: > tags.id]
+  created_at timestamp(3) [default: `now()`]
+}
+
+Table answers {
+  id varchar [pk]
+  text varchar [not null]
+  parent_answer_id varchar [ref: > answers.id]
+  user_id varchar [ref: > users.id]
+  question_id varchar [ref: > questions.id]
+  created_at timestamp(3) [default: `now()`]
+}
+
+Table tags {
+  id varchar [pk]
+  text varchar [unique, not null]
+  created_at timestamp(3) [default: `now()`]
+}
