@@ -11,16 +11,17 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String    @unique
-  email     String    @unique
+  id        String     @id @default(uuid())
+  username  String     @unique
+  email     String     @unique
   about     String?
   password  String
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime   @default(now()) @map("updated_at") @db.Timestamptz(3)
   Post      Post[]
   Comment   Comment[]
   Vote      Vote[]
+  Question  Question[]
 
   @@map("users")
 }
@@ -63,4 +64,15 @@ model Vote {
   Post      Post     @relation(fields: [postId], references: [id])
 
   @@map("votes")
+}
+
+model Question {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  userId    String   @map("user_id")
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@map("questions")
 }

@@ -38,7 +38,7 @@ Table votes {
 
 Table questions {
   id varchar [pk]
-  text varchar [not null]
+  content varchar [not null]
   user_id varchar [ref: > users.id]
   tag_id varchar [ref: > tags.id]
   created_at timestamp(3) [default: `now()`]
