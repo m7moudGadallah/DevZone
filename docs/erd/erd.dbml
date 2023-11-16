@@ -12,8 +12,8 @@ Table users {
 Table posts {
   id varchar [pk]
   title varchar [not null]
-  url varchar [unique]
-  text varchar
+  url varchar
+  content varchar
   user_id varchar [ref: > users.id]
   tag_id varchar [ref: > tags.id]
   created_at timestamp(3) [default: `now()`]
@@ -21,7 +21,7 @@ Table posts {
 
 Table comments {
   id varchar [pk]
-  text varchar [not null]
+  content varchar [not null]
   parent_comment_id varchar [ref: > comments.id]
   user_id varchar [ref: > users.id]
   post_id varchar [ref: > posts.id]

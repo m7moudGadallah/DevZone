@@ -11,26 +11,43 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  email     String   @unique
+  id        String    @id @default(uuid())
+  username  String    @unique
+  email     String    @unique
   about     String?
   password  String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(3)
   Post      Post[]
+  Comment   Comment[]
 
   @@map("users")
 }
 
 model Post {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   title     String
   url       String
   content   String
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  userId    String   @map("user_id")
-  User      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  userId    String    @map("user_id")
+  User      User      @relation(fields: [userId], references: [id])
+  Comment   Comment[]
 
   @@map("posts")
+}
+
+model Comment {
+  id              String    @id @default(uuid())
+  content         String
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  userId          String    @map("user_id")
+  postId          String    @map("post_id")
+  User            User      @relation(fields: [userId], references: [id])
+  Post            Post      @relation(fields: [postId], references: [id])
+  parentCommentId String?   @map("parent_comment_id")
+  ParentComment   Comment?  @relation("ChildToParent", fields: [parentCommentId], references: [id])
+  childComment    Comment[] @relation("ChildToParent")
+
+  @@map("comments")
 }
