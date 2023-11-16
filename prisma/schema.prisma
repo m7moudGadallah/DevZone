@@ -20,6 +20,7 @@ model User {
   updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamptz(3)
   Post      Post[]
   Comment   Comment[]
+  Vote      Vote[]
 
   @@map("users")
 }
@@ -33,6 +34,7 @@ model Post {
   userId    String    @map("user_id")
   User      User      @relation(fields: [userId], references: [id])
   Comment   Comment[]
+  Vote      Vote[]
 
   @@map("posts")
 }
@@ -50,4 +52,15 @@ model Comment {
   childComment    Comment[] @relation("ChildToParent")
 
   @@map("comments")
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
+  User      User     @relation(fields: [userId], references: [id])
+  Post      Post     @relation(fields: [postId], references: [id])
+
+  @@map("votes")
 }
