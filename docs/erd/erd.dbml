@@ -46,7 +46,7 @@ Table questions {
 
 Table answers {
   id varchar [pk]
-  text varchar [not null]
+  content varchar [not null]
   parent_answer_id varchar [ref: > answers.id]
   user_id varchar [ref: > users.id]
   question_id varchar [ref: > questions.id]

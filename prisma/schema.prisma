@@ -22,6 +22,7 @@ model User {
   Comment   Comment[]
   Vote      Vote[]
   Question  Question[]
+  Answer    Answer[]
 
   @@map("users")
 }
@@ -73,6 +74,19 @@ model Question {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   userId    String   @map("user_id")
   User      User     @relation(fields: [userId], references: [id])
+  Answer    Answer[]
 
   @@map("questions")
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  content    String
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  userId     String   @map("user_id")
+  questionId String   @map("question_id")
+  User       User     @relation(fields: [userId], references: [id])
+  Question   Question @relation(fields: [questionId], references: [id])
+
+  @@map("answers")
 }
