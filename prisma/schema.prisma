@@ -22,3 +22,15 @@ model User {
 
   @@map("users")
 }
+
+model Post {
+  id        String   @id @default(uuid())
+  title     String
+  url       String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  userId    String   @map("user_id")
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@map("posts")
+}
