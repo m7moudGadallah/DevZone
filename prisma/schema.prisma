@@ -38,6 +38,7 @@ model Post {
   User      User      @relation(fields: [userId], references: [id])
   Comment   Comment[]
   Vote      Vote[]
+  PostTag   PostTag[]
 
   @@map("posts")
 }
@@ -98,6 +99,7 @@ model Tag {
   name        String        @unique
   createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
   QuestionTag QuestionTag[]
+  PostTag     PostTag[]
 
   @@map("tags")
 }
@@ -110,4 +112,14 @@ model QuestionTag {
   Question   Question @relation(fields: [questionId], references: [id])
 
   @@map("question_tags")
+}
+
+model PostTag {
+  id     String @id @default(uuid())
+  tagId  String @map("tag_id")
+  postId String @map("post_id")
+  Tag    Tag    @relation(fields: [tagId], references: [id])
+  Post   Post   @relation(fields: [postId], references: [id])
+
+  @@map("post_tags")
 }
