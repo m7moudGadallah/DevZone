@@ -11,18 +11,19 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  username  String     @unique
-  email     String     @unique
-  about     String?
-  password  String
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime   @default(now()) @map("updated_at") @db.Timestamptz(3)
-  Post      Post[]
-  Comment   Comment[]
-  Vote      Vote[]
-  Question  Question[]
-  Answer    Answer[]
+  id                String     @id @default(uuid())
+  username          String     @unique
+  email             String     @unique
+  about             String?
+  password          String
+  passwordChangedAt DateTime?  @map("password_changed_at")
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime   @default(now()) @map("updated_at") @db.Timestamptz(3)
+  Post              Post[]
+  Comment           Comment[]
+  Vote              Vote[]
+  Question          Question[]
+  Answer            Answer[]
 
   @@map("users")
 }
