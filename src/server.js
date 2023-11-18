@@ -50,7 +50,7 @@ class Server {
 }
 
 // Run the server if not running in test mode
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'testing') {
   Server.initialize(createApp());
 }
 
