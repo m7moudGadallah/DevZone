@@ -41,6 +41,7 @@ class Database {
     try {
       if (Database.#dbClientInstance) {
         await Database.#dbClientInstance.$disconnect();
+        Database.#dbClientInstance = null;
       }
     } catch (error) {
       console.error('Error while disconnecting Prisma Client: ', error);
