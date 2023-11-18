@@ -1,6 +1,7 @@
 const http = require('http');
 require('colors');
 require('./config');
+const { createApp } = require('./api');
 
 /**
  * HTTP Server class
@@ -46,6 +47,11 @@ class Server {
       });
     }
   }
+}
+
+// Run the server if not running in test mode
+if (process.env.NODE_ENV !== 'test') {
+  Server.initialize(createApp());
 }
 
 module.exports = { Server };
