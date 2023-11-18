@@ -55,6 +55,6 @@ Table answers {
 
 Table tags {
   id varchar [pk]
-  text varchar [unique, not null]
+  name varchar [unique, not null]
   created_at timestamp(3) [default: `now()`]
 }
