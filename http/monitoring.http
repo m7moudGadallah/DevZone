@@ -1,0 +1,5 @@
+## ENV
+@URL=http://localhost:3000
+
+#################livez#############################
+GET {{URL}}/livez
