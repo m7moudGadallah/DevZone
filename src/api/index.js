@@ -1,6 +1,10 @@
 require('colors');
 const express = require('express');
 const { DATABASE_CONFIG, Database } = require('../config');
+const {
+  HTTP_STATUS_CODES,
+  JsonResponseGenerator,
+} = require('../shared/helpers');
 
 /**
  * Create Express app
@@ -22,12 +26,12 @@ function createApp() {
   // TODO: Mount Pre-Middlewares
 
   // Mount API monitoring routes
-  app.get('/livez', (req, res) =>
-    res.status(200).json({
-      success: true,
-      message: 'Server is running🚀...',
-    })
-  );
+  app.get('/livez', (req, res) => {
+    const response = JsonResponseGenerator.generateSuccessResponse(
+      'Server is running🚀...'
+    );
+    res.status(HTTP_STATUS_CODES.OK).json(response);
+  });
 
   // TODO: Mount API routes
 
