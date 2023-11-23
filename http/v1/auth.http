@@ -1,0 +1,44 @@
+## ENV
+@URL=http://localhost:3000/api/v1/auth
+
+### Sign Up
+POST {{URL}}/signup
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test1234"
+}
+
+### Login
+POST {{URL}}/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "test1234"
+}
+
+### Get my account details
+GET {{URL}}/me
+
+
+### Update my account details
+PATCH {{URL}}/me
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}
+
+### Change my password
+PATCH {{URL}}/change-my-password
+Content-Type: application/json
+
+{
+  "password": "test1234",
+  "newPassword": "test12345"
+}
+
+### Logout
+GET {{URL}}/logout
