@@ -71,10 +71,14 @@ class JsonResponseGenerator {
    * @returns {{success: false, message: 'Something went wrong!', error: ResponseError}} The json response object.
    */
   static generateErrorResponse(error) {
+    const { status, message } = error;
     return {
       success: false,
       message: 'Something went wrong!',
-      error,
+      error: {
+        status,
+        message,
+      },
     };
   }
 }
