@@ -5,6 +5,10 @@ const {
   HTTP_STATUS_CODES,
   JsonResponseGenerator,
 } = require('../shared/helpers');
+const {
+  loadPreMiddlewares,
+  loadPostMiddlewares,
+} = require('../shared/middlewares');
 
 /**
  * Create Express app
@@ -23,7 +27,7 @@ function createApp() {
   // Create Express app
   const app = express();
 
-  // TODO: Mount Pre-Middlewares
+  loadPreMiddlewares(app);
 
   // Mount API monitoring routes
   app.get('/livez', (req, res) => {
@@ -35,7 +39,7 @@ function createApp() {
 
   // TODO: Mount API routes
 
-  // TODO: Mount Post-Middlewares
+  loadPostMiddlewares(app);
 
   return app;
 }
