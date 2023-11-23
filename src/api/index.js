@@ -9,6 +9,7 @@ const {
   loadPreMiddlewares,
   loadPostMiddlewares,
 } = require('../shared/middlewares');
+const { loadV1Routes } = require('./v1');
 
 /**
  * Create Express app
@@ -37,7 +38,8 @@ function createApp() {
     res.status(HTTP_STATUS_CODES.OK).json(response);
   });
 
-  // TODO: Mount API routes
+  // Load API v1 routes
+  loadV1Routes(app);
 
   loadPostMiddlewares(app);
 
