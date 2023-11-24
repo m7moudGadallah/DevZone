@@ -31,10 +31,9 @@ function createApp() {
   loadPreMiddlewares(app);
 
   // Mount API monitoring routes
-  app.get('/livez', (req, res) => {
-    const response = JsonResponseGenerator.generateSuccessResponse(
-      'Server is running🚀...'
-    );
+  app.get('/api/livez', (req, res) => {
+    const response =
+      JsonResponseGenerator.generateSuccessResponse('API is live! 🚀');
     res.status(HTTP_STATUS_CODES.OK).json(response);
   });
 
