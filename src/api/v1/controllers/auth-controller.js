@@ -36,7 +36,7 @@ class AuthController {
       );
 
       res
-        .status(HTTP_STATUS_CODES.OK)
+        .status(HTTP_STATUS_CODES.CREATED)
         .cookie('jwt', token, cookieOptions)
         .json(response);
     }
