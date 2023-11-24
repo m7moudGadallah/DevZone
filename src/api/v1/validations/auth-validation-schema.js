@@ -70,12 +70,21 @@ const signupSchema = joi
   })
   .prefs({ abortEarly: false, stripUnknown: true });
 
+// Login validation schema
+const loginSchema = joi
+  .object({
+    username: validateUsername(),
+    password: validatePassword(),
+  })
+  .prefs({ abortEarly: false, stripUnknown: true });
+
 /**
  * @typedef AUTH_VALIDATION_SCHEMA
  * @property {signupSchema} signup
  */
 const AUTH_VALIDATION_SCHEMA = Object.freeze({
   signup: signupSchema,
+  login: loginSchema,
 });
 
 module.exports = { AUTH_VALIDATION_SCHEMA };

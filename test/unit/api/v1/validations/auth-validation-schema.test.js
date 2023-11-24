@@ -25,7 +25,7 @@ describe('AUTH_VALIDATION_SCHEMA', () => {
     });
 
     it('should throw an error for bad username', () => {
-      const { error, value } = AUTH_VALIDATION_SCHEMA.signup.validate({
+      const { error } = AUTH_VALIDATION_SCHEMA.signup.validate({
         username: badUsername,
         password,
       });
@@ -79,6 +79,79 @@ describe('AUTH_VALIDATION_SCHEMA', () => {
 
     it('should strip unknown properties', () => {
       const { error, value } = AUTH_VALIDATION_SCHEMA.signup.validate({
+        username,
+        password,
+        x: 10,
+      });
+
+      expect(error).toBeUndefined();
+      expect(value).toBeDefined();
+      expect(value).not.toHaveProperty('x');
+      expect(value).toMatchObject({
+        username,
+        password,
+      });
+    });
+  });
+
+  describe('loginSchema', () => {
+    it('should validate username, password', () => {
+      const { error, value } = AUTH_VALIDATION_SCHEMA.login.validate({
+        username,
+        password,
+      });
+
+      expect(error).toBeUndefined();
+      expect(value).toMatchObject({
+        username,
+        password,
+      });
+    });
+
+    it('should throw an error for bad username', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA.login.validate({
+        username: badUsername,
+        password,
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch(
+        '"username" must be at least 3 characters long'
+      );
+    });
+
+    it('should throw an error for bad password', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA.login.validate({
+        username,
+        password: badPassword,
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch(
+        '"password" must be at least 8 characters long'
+      );
+    });
+
+    it('should throw an error if username is missed', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA.login.validate({
+        password,
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch('"username" is required');
+    });
+
+    it('should throw an error if password is missed', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA.login.validate({
+        username,
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch('"password" is required');
+    });
+
+    it('should strip unknown properties', () => {
+      const { error, value } = AUTH_VALIDATION_SCHEMA.login.validate({
         username,
         password,
         x: 10,
