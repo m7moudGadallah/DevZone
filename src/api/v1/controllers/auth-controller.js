@@ -55,8 +55,25 @@ class AuthController {
      * @param {import('express').NextFunction} next
      */
     async (req, res, next) => {
-      // TODO: implement login controller
-      notImplementedControllerResponse(req, res);
+      const { username, password } = req.body;
+
+      const token = await AuthService.login(username, password);
+
+      const cookieOptions = JsonResponseGenerator.generateCookieOptions(
+        +process.env.COOKIE_EXPIRES_IN
+      );
+
+      const response = JsonResponseGenerator.generateSuccessResponse(
+        'Logged in Successfully!',
+        {
+          token,
+        }
+      );
+
+      res
+        .status(HTTP_STATUS_CODES.OK)
+        .cookie('jwt', token, cookieOptions)
+        .json(response);
     }
   );
 
