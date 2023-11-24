@@ -64,7 +64,45 @@ class AuthService {
    * @returns {Promise<string>} JWT token
    */
   static async login(username, password) {
-    // TODO: implement login service
+    // Validate parameters
+    if (!username || !password)
+      throw new AppError(
+        'Some missing parameters',
+        HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR
+      );
+
+    const DB = Database.getInstance();
+
+    // Fetch user from database
+    const user = await DB.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    // Validate that user is exists
+    if (!user) {
+      throw new AppError(
+        'Invalid email or password',
+        HTTP_STATUS_CODES.FORBIDDEN
+      );
+    }
+
+    // Validate password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      throw new AppError(
+        'Invalid email or password',
+        HTTP_STATUS_CODES.FORBIDDEN
+      );
+    }
+
+    // Generate JWT Token
+    const token = JWTService.generate(user.id);
+
+    // return token
+    return token;
   }
 
   /**
