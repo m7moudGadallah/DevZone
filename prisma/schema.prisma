@@ -51,9 +51,9 @@ model Comment {
   postId          String    @map("post_id")
   User            User      @relation(fields: [userId], references: [id])
   Post            Post      @relation(fields: [postId], references: [id])
-  parentCommentId String?   @map("parent_comment_id")
-  ParentComment   Comment?  @relation("ChildToParent", fields: [parentCommentId], references: [id])
-  childComment    Comment[] @relation("ChildToParent")
+  parentId String?   @map("parent_id")
+  Parent   Comment?  @relation("replies", fields: [parentId], references: [id], onDelete: Cascade)
+  Reply    Comment[] @relation("replies")
 
   @@map("comments")
 }
