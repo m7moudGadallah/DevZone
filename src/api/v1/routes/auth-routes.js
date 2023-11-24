@@ -1,10 +1,11 @@
 const { Router } = require('express');
-const { AuthMiddleware } = require('../middlewares');
+const { validate, AuthMiddleware } = require('../middlewares');
 const { AuthController } = require('../controllers');
 
 const router = Router();
 
-// TODO: Mount validation middleware
+// Mount validation middleware
+router.use(validate('AUTH'));
 
 // Public routes
 router.route('/signup').post(AuthController.signup);
