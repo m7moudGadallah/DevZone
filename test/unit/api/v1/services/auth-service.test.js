@@ -2,6 +2,9 @@ const bcrypt = require('bcryptjs');
 const { AuthService } = require('../../../../../src/api/v1/services');
 const { Database } = require('../../../../../src/config');
 const { AppError } = require('../../../../../src/shared/helpers');
+const {
+  JWTService,
+} = require('../../../../../src/shared/services/jwt-service');
 
 jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn(() => ({
@@ -15,6 +18,7 @@ jest.mock('@prisma/client', () => ({
 jest.mock('../../../../../src/shared/services/jwt-service.js', () => ({
   JWTService: {
     generate: jest.fn(() => 'mocked-jwt-token'),
+    decode: jest.fn(),
   },
 }));
 
@@ -144,6 +148,87 @@ describe('AuthService', () => {
         mockUser.password,
         mockUser.password
       );
+    });
+  });
+
+  describe('getMeViaToken', () => {
+    it('should throw an error for missing parameters', async () => {
+      await expect(AuthService.getMeViaToken()).rejects.toThrow(
+        expect.any(AppError)
+      );
+    });
+
+    it('should throw an error if token is expired', async () => {
+      // Mock returned value of decode method in JWTService
+      JWTService.decode.mockReturnValue({
+        iat: Date.now() / 1000 - 100,
+        exp: Date.now() / 1000 - 10,
+        id: 1,
+      });
+
+      await expect(AuthService.getMeViaToken('token')).rejects.toThrow(
+        expect.any(AppError)
+      );
+    });
+
+    it(`should throw an error if user doesn't exist`, async () => {
+      // Mock returned value of decode method in JWTService
+      JWTService.decode.mockReturnValue({
+        iat: Date.now() / 1000 - 100,
+        exp: Date.now() / 1000 + 10000,
+        id: 1,
+      });
+
+      // Mock database
+      mockDatabase.user.findUnique.mockResolvedValue(null);
+
+      await expect(AuthService.getMeViaToken('token')).rejects.toThrow(
+        expect.any(AppError)
+      );
+    });
+
+    it('should throw an error if password changed after token is issued', async () => {
+      // Mock returned value of decode method in JWTService
+      JWTService.decode.mockReturnValue({
+        iat: Date.now() / 1000 - 100000,
+        exp: Date.now() / 1000 + 50000,
+        id: 1,
+      });
+
+      // Mock database
+      mockDatabase.user.findUnique.mockResolvedValue({
+        id: 1,
+        username: 'test',
+        passwordChangedAt: new Date(Date.now()),
+      });
+
+      await expect(AuthService.getMeViaToken('token')).rejects.toThrow(
+        expect.any(AppError)
+      );
+    });
+
+    it('should return a user', async () => {
+      // Mock returned value of decode method in JWTService
+      JWTService.decode.mockReturnValue({
+        iat: Date.now() / 1000 - 100000,
+        exp: Date.now() / 1000 + 50000,
+        id: '1',
+      });
+
+      // mock user
+      const mockUser = {
+        id: '1',
+        username: 'test',
+        password: 'password-test',
+      };
+
+      // Mock database
+      mockDatabase.user.findUnique.mockResolvedValue(mockUser);
+
+      const user = await AuthService.getMeViaToken('token');
+
+      expect(user).toBeDefined();
+      expect(user).toMatchObject(mockUser);
     });
   });
 });

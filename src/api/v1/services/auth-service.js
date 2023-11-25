@@ -106,13 +106,70 @@ class AuthService {
   }
 
   /**
+   * @HelperFunction Check if user changed password after jwt token issued
+   * @access private
+   * @param {Date} passwordChangedAt Date that last time password changed
+   * @param {number} jwtIAT issued date of jwt
+   * @returns {boolean} true if password is changed after token is issued so it's an expired token, otherwise false
+   */
+  static isPasswordChangedAfter(passwordChangedAt, jwtIAT) {
+    // Validate parameters
+    if (!passwordChangedAt || !jwtIAT)
+      throw new AppError(
+        'Some missing parameters',
+        HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR
+      );
+
+    // passwordChangedAt -> timestamp in milliseconds
+    const passwordChangedAtTimestamp = passwordChangedAt.getTime() / 1000;
+
+    return jwtIAT < passwordChangedAtTimestamp;
+  }
+
+  /**
    * Get user data using JWT token
    * @async
    * @param {string} token JWT token
    * @returns {Promise<import('@prisma/client').User>} User data
    */
   static async getMeViaToken(token) {
-    // TODO: implement getMeViaToken service
+    // Validate parameters
+    if (!token)
+      throw new AppError(
+        'Some missing parameters',
+        HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR
+      );
+
+    // Decode token
+    const decodedToken = JWTService.decode(token);
+
+    // Validate that token is not expired
+    if (decodedToken.exp < Date.now() / 1000)
+      throw new AppError('Invalid token', HTTP_STATUS_CODES.UNAUTHORIZED);
+
+    // Validate that user id is valid
+    const DB = Database.getInstance();
+
+    const user = await DB.user.findUnique({
+      where: {
+        id: decodedToken.id,
+      },
+    });
+
+    if (!user)
+      throw new AppError('Invalid token', HTTP_STATUS_CODES.UNAUTHORIZED);
+
+    // Validate that token is not Issued before password is changed
+    if (
+      user.passwordChangedAt &&
+      AuthService.isPasswordChangedAfter(
+        user.passwordChangedAt,
+        decodedToken.iat
+      )
+    )
+      throw new AppError('Invalid token', HTTP_STATUS_CODES.UNAUTHORIZED);
+
+    return user;
   }
 
   /**
