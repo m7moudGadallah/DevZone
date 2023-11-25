@@ -11,6 +11,7 @@ jest.mock('@prisma/client', () => ({
     user: {
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   })),
 }));
@@ -226,6 +227,33 @@ describe('AuthService', () => {
       mockDatabase.user.findUnique.mockResolvedValue(mockUser);
 
       const user = await AuthService.getMeViaToken('token');
+
+      expect(user).toBeDefined();
+      expect(user).toMatchObject(mockUser);
+    });
+  });
+
+  describe('updateMe', () => {
+    it('should throw an error for missed parameters', async () => {
+      await expect(AuthService.updateMe()).rejects.toThrow(
+        expect.any(AppError)
+      );
+    });
+
+    it('should update user and return updated user', async () => {
+      // mock user
+      const mockUser = {
+        id: '1',
+        username: 'test',
+        password: 'password-test',
+      };
+
+      // Mock database
+      mockDatabase.user.update.mockResolvedValue(mockUser);
+
+      const user = await AuthService.updateMe('1', {
+        email: 'test@example.com',
+      });
 
       expect(user).toBeDefined();
       expect(user).toMatchObject(mockUser);

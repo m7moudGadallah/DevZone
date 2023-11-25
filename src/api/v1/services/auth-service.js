@@ -175,12 +175,29 @@ class AuthService {
   /**
    * Update user data
    * @async
-   * @param {string} username
-   * @param {{username?: string, email?: string, about?: string, }} data
+   * @param {string} id user id
+   * @param {{email?: string, about?: string}} data
    * @returns {Promise<import('@prisma/client').User>} User data
    */
-  static async updateMe(username, data) {
-    // TODO: implement updateMe service
+  static async updateMe(id, data) {
+    // Validate parameters
+    if (!id || !data)
+      throw new AppError(
+        'Some missing parameters',
+        HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR
+      );
+
+    // Update user data
+    const DB = Database.getInstance();
+
+    const updatedUser = await DB.user.update({
+      where: {
+        id,
+      },
+      data,
+    });
+
+    return updatedUser;
   }
 
   /**
