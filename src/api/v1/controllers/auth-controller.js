@@ -3,6 +3,7 @@ const {
   notImplementedControllerResponse,
   JsonResponseGenerator,
   HTTP_STATUS_CODES,
+  AppError,
 } = require('../../../shared/helpers');
 const { AuthService } = require('../services');
 
@@ -123,8 +124,32 @@ class AuthController {
      * @param {import('express').NextFunction} next
      */
     async (req, res, next) => {
-      // TODO: implement updateMe controller
-      notImplementedControllerResponse(req, res);
+      const { id } = req.locals.user;
+      const data = req.body;
+
+      if (!data || !Object.keys(data).length)
+        throw new AppError(
+          'There is no data to be updated',
+          HTTP_STATUS_CODES.BAD_REQUEST
+        );
+
+      const { username, email, about } = await AuthService.updateMe(id, data);
+
+      const response = JsonResponseGenerator.generateSuccessResponse(
+        'Account data updated successfully',
+        {
+          data: {
+            user: {
+              id,
+              username,
+              email,
+              about,
+            },
+          },
+        }
+      );
+
+      res.status(HTTP_STATUS_CODES.OK).json(response);
     }
   );
 
