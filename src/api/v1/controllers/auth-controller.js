@@ -90,8 +90,23 @@ class AuthController {
      * @param {import('express').NextFunction} next
      */
     async (req, res, next) => {
-      // TODO: implement getMe controller
-      notImplementedControllerResponse(req, res);
+      const { id, username, email, about } = req.locals.user;
+
+      const response = JsonResponseGenerator.generateSuccessResponse(
+        'Account data retrieved successfully',
+        {
+          data: {
+            user: {
+              id,
+              username,
+              email,
+              about,
+            },
+          },
+        }
+      );
+
+      res.status(HTTP_STATUS_CODES.OK).json(response);
     }
   );
 
