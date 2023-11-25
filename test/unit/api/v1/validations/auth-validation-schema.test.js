@@ -166,4 +166,43 @@ describe('AUTH_VALIDATION_SCHEMA', () => {
       });
     });
   });
+
+  describe('meSchema', () => {
+    it('should throw an error if email is not valid', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA.me.validate({ email: 'test' });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch('"email" must be a valid email');
+    });
+
+    it('should throw an error if about is exceeds 50000 characters', () => {
+      const about = 'c'.repeat(500001);
+
+      const { error } = AUTH_VALIDATION_SCHEMA.me.validate({ about });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch(
+        '"about" must be at most 50000 characters long'
+      );
+    });
+
+    it('should strip unknown properties', () => {
+      const email = 'test@example.com';
+      const about = `I'm a test`;
+
+      const { error, value } = AUTH_VALIDATION_SCHEMA.me.validate({
+        email,
+        about,
+        x: 10,
+      });
+
+      expect(error).toBeUndefined();
+      expect(value).toBeDefined();
+      expect(value).not.toHaveProperty('x');
+      expect(value).toMatchObject({
+        email,
+        about,
+      });
+    });
+  });
 });

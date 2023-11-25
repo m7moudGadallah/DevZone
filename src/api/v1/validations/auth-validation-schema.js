@@ -78,6 +78,13 @@ const loginSchema = joi
   })
   .prefs({ abortEarly: false, stripUnknown: true });
 
+const meSchema = joi
+  .object({
+    email: validateEmail(false),
+    about: joi.string().min(0).max(50000).message(customErrorMessages),
+  })
+  .prefs({ abortEarly: false, stripUnknown: true });
+
 /**
  * @typedef AUTH_VALIDATION_SCHEMA
  * @property {signupSchema} signup
@@ -85,6 +92,7 @@ const loginSchema = joi
 const AUTH_VALIDATION_SCHEMA = Object.freeze({
   signup: signupSchema,
   login: loginSchema,
+  me: meSchema,
 });
 
 module.exports = { AUTH_VALIDATION_SCHEMA };
