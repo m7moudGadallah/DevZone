@@ -182,6 +182,34 @@ class AuthController {
       res.status(HTTP_STATUS_CODES.OK).json(response);
     }
   );
+
+  /**
+   * @route GET /api/v1/auth/logout
+   * @access private
+   * @description Log out
+   */
+  static logout = catchAsync(
+    /**
+     * @async
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     * @param {import('express').NextFunction} next
+     */
+    async (req, res, next) => {
+      const token = 'destroy-token';
+
+      const cookieOptions = JsonResponseGenerator.generateCookieOptions(1);
+      const response = JsonResponseGenerator.generateSuccessResponse(
+        'Logged out successfully',
+        { token }
+      );
+
+      res
+        .status(HTTP_STATUS_CODES.OK)
+        .cookie('jwt', token, cookieOptions)
+        .json(response);
+    }
+  );
 }
 
 module.exports = { AuthController };

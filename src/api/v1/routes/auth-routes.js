@@ -18,4 +18,6 @@ router.route('/me').get(AuthController.getMe).patch(AuthController.updateMe);
 
 router.route('/change-my-password').patch(AuthController.changeMyPassword);
 
+router.route('/logout').get(AuthController.logout);
+
 module.exports = { authRoutes: router };
