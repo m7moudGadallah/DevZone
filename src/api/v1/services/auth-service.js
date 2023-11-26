@@ -203,13 +203,41 @@ class AuthService {
   /**
    * Change user password
    *@async
-   * @param {string} username
-   * @param {string} oldPassword
-   * @param {string} newPassword
-   * @returns {Promise<void>}
+   * @param {import('@prisma/client').User} user user object from request locals
+   * @param {string} password current password
+   * @param {string} newPassword new password
+   * @returns {Promise<import('@prisma/client').User>} updated User
    */
-  static async changePassword(username, oldPassword, newPassword) {
-    // TODO: implement changePassword service
+  static async changePassword(user, password, newPassword) {
+    // Validate parameters
+    if (!user || !user.password || !password || !newPassword)
+      throw new AppError(
+        'Some missing parameters',
+        HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR
+      );
+
+    // Validate current password
+    const isMatch = bcrypt.compare(password, user.password);
+
+    if (!isMatch)
+      throw new AppError('Wrong password!', HTTP_STATUS_CODES.FORBIDDEN);
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    // Update user password
+    const DB = Database.getInstance();
+    const updatedUser = await DB.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: passwordHash,
+        passwordChangedAt: new Date(Date.now()),
+      },
+    });
+
+    return updatedUser;
   }
 }
 

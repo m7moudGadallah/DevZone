@@ -259,4 +259,64 @@ describe('AuthService', () => {
       expect(user).toMatchObject(mockUser);
     });
   });
+
+  describe('changePassword', () => {
+    it('should throw an error for missed parameters', async () => {
+      await expect(AuthService.changePassword()).rejects.toThrow(
+        expect.any(AppError)
+      );
+    });
+
+    it('should throw an error if password not matched', async () => {
+      const mockUser = {
+        id: '1',
+        username: 'test',
+        password: 'test1234',
+      };
+
+      await expect(
+        AuthService.changePassword(mockUser, 'test1235', 'test1235')
+      ).rejects.toThrow(expect.any(AppError));
+
+      expect(bcrypt.compare).toHaveBeenCalledWith('test1235', 'test1234');
+      expect(bcrypt.compare).toHaveReturnedWith(false);
+    });
+
+    it('should update password and return updatedUser', async () => {
+      // Mock user
+      const mockUser = {
+        id: '1',
+        username: 'test',
+        password: 'test1324',
+      };
+
+      const newPassword = 'test1235';
+      const passwordHash = `hashed-${newPassword}`;
+
+      // Mock resolved value of database update
+      mockDatabase.user.update.mockResolvedValue({
+        ...mockUser,
+        password: passwordHash,
+      });
+
+      const updatedUser = await AuthService.changePassword(
+        mockUser,
+        'test1324',
+        newPassword
+      );
+
+      expect(bcrypt.hash).toHaveBeenCalledWith(newPassword, 12);
+      expect(mockDatabase.user.update).toHaveBeenCalledWith({
+        where: {
+          id: mockUser.id,
+        },
+        data: {
+          password: passwordHash,
+          passwordChangedAt: expect.any(Date),
+        },
+      });
+      expect(updatedUser).toBeDefined();
+      expect(updatedUser.password).toBe(passwordHash);
+    });
+  });
 });
