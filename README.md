@@ -1,13 +1,17 @@
+<!-- markdownlint-disable MD033 -->
+
 # DevZone
 
 ⚠️ Still working on this project on v1.0
 
-## Table Of Content
+<img src="/imgs/DevZone-logo.gif" alt="DevZone-logo" width="100" height="100">
+
+# Table Of Content
 
 <!-- TOC -->
 
 - [DevZone](#devzone)
-  - [Table Of Content](#table-of-content)
+- [Table Of Content](#table-of-content)
   - [Description](#description)
   - [Project Details](#project-details)
   - [Key Features](#key-features)
