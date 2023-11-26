@@ -205,4 +205,63 @@ describe('AUTH_VALIDATION_SCHEMA', () => {
       });
     });
   });
+
+  describe('changePasswordSchema', () => {
+    it('should throw an error if password is not valid', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA['change-my-password'].validate({
+        password: badPassword,
+        newPassword: password,
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch(
+        '"password" must be at least 8 characters long'
+      );
+    });
+
+    it('should throw an error if newPassword is not valid', () => {
+      const { error } = AUTH_VALIDATION_SCHEMA['change-my-password'].validate({
+        password: password,
+        newPassword: badPassword,
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch(
+        '"newPassword" must be at least 8 characters long'
+      );
+    });
+
+    it(`should throw error if newPasswordConfirm doesn't match newPassword`, () => {
+      const { error } = AUTH_VALIDATION_SCHEMA['change-my-password'].validate({
+        password: password,
+        newPassword: password,
+        newPasswordConfirm: 'test5235',
+      });
+
+      expect(error).toBeDefined();
+      expect(error.message).toMatch(
+        '"newPasswordConfirm" must match "newPassword"'
+      );
+    });
+
+    it('should strip unknown properties', () => {
+      const { error, value } = AUTH_VALIDATION_SCHEMA[
+        'change-my-password'
+      ].validate({
+        password,
+        newPassword: password,
+        newPasswordConfirm: password,
+        x: '10',
+      });
+
+      expect(error).toBeUndefined();
+      expect(value).toBeDefined();
+      expect(value).not.toHaveProperty('x');
+      expect(value).toMatchObject({
+        password,
+        newPassword: password,
+        newPasswordConfirm: password,
+      });
+    });
+  });
 });

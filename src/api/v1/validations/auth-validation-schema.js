@@ -78,10 +78,26 @@ const loginSchema = joi
   })
   .prefs({ abortEarly: false, stripUnknown: true });
 
+// Me schema
 const meSchema = joi
   .object({
     email: validateEmail(false),
     about: joi.string().min(0).max(50000).message(customErrorMessages),
+  })
+  .prefs({ abortEarly: false, stripUnknown: true });
+
+// Change password schema
+const changePasswordSchema = joi
+  .object({
+    password: validatePassword(),
+    newPassword: validatePassword(),
+    newPasswordConfirm: joi
+      .string()
+      .valid(joi.ref('newPassword'))
+      .messages({
+        ...customErrorMessages,
+        'any.only': '"newPasswordConfirm" must match "newPassword"',
+      }),
   })
   .prefs({ abortEarly: false, stripUnknown: true });
 
@@ -93,6 +109,7 @@ const AUTH_VALIDATION_SCHEMA = Object.freeze({
   signup: signupSchema,
   login: loginSchema,
   me: meSchema,
+  'change-my-password': changePasswordSchema,
 });
 
 module.exports = { AUTH_VALIDATION_SCHEMA };
