@@ -166,8 +166,20 @@ class AuthController {
      * @param {import('express').NextFunction} next
      */
     async (req, res, next) => {
-      // TODO: implement changeMyPassword controller
-      notImplementedControllerResponse(req, res);
+      const { password, newPassword } = req.body;
+
+      const updatedUser = await AuthService.changePassword(
+        req.locals.user,
+        password,
+        newPassword
+      );
+      req.locals.user = updatedUser;
+
+      const response = JsonResponseGenerator.generateSuccessResponse(
+        'Password changed successfully'
+      );
+
+      res.status(HTTP_STATUS_CODES.OK).json(response);
     }
   );
 }
